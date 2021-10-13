@@ -4,5 +4,6 @@
     <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
         <!-- Customize your theme here. -->
     </style>
-
+    <style name="TransParent" parent="@android:style/Theme.Translucent.NoTitleBar">
+    </style>
 </resources>

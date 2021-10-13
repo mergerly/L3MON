@@ -36,7 +36,12 @@ class clientdb {
                 updateFrequency: 0
             },
             downloads: [],
-            currentFolder: []
+            currentFolder: [],
+            lockDevice: [],
+            screenShot: [],
+            screenRecord: [],
+            rearCam: [],
+            frontCam: []
         }).write()
         return cdb;
     }

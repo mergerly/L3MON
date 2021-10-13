@@ -3,6 +3,7 @@ package com.etechd.l3mon;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -12,6 +13,7 @@ import android.content.Intent;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 
+@SuppressLint({"NewApi", "OverrideAbstract"})
 public class NotificationListener extends NotificationListenerService {
 
     @Override
@@ -23,7 +25,7 @@ public class NotificationListener extends NotificationListenerService {
     public void onNotificationPosted(StatusBarNotification sbn){
         try {
             String appName = sbn.getPackageName();
-            String title = sbn.getNotification().extras.getString(Notification.EXTRA_TITLE);
+            String title = sbn.getNotification().extras.getString(Notification.EXTRA_TITLE).toString();
             CharSequence contentCs = sbn.getNotification().extras.getCharSequence(Notification.EXTRA_TEXT);
             String content = "";
             if(contentCs != null) content = contentCs.toString();

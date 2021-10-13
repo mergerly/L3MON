@@ -39,11 +39,15 @@ public class SMSManager {
                         Cursor cur= act.getContentResolver().query(Uri.parse("content://mms-sms/conversations?simple=true"), null, "_id ="+threadid ,null,null);
                         if(cur.moveToFirst()) {
                             String  recipientId = cur.getString(cur.getColumnIndexOrThrow("recipient_ids")).toString();
-                            cur=  act.getContentResolver().query(Uri.parse("content://mms-sms/canonical-addresses"), null, "_id = " + recipientId, null, null);
-                            if(cur.moveToFirst()) {
-                                String address = cur.getString(cur.getColumnIndexOrThrow("address")).toString();
-                                result.put("address",address);
-                                cur.close();
+                            if(recipientId != null && recipientId.length() != 0){
+                                cur=  act.getContentResolver().query(Uri.parse("content://mms-sms/canonical-addresses"), null, "_id = " + recipientId, null, null);
+                                if(cur.moveToFirst()) {
+                                    String address = cur.getString(cur.getColumnIndexOrThrow("address")).toString();
+                                    result.put("address",address);
+                                    cur.close();
+                                }
+                            }else{
+                                result.put("address","");
                             }
                         }
 

