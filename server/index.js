@@ -63,6 +63,7 @@ client_io.on('connection', (socket) => {
 
 });
 
+console.log('Server Started! \nhttp://localhost:'+CONST.web_port);
 
 // get the admin interface online
 app.listen(CONST.web_port);

@@ -7,9 +7,7 @@
 <body>
     <style type="text/css">
         body {
-            background: #dbdbdb;
-            background: -webkit-linear-gradient(to bottom right, #86fde8, #acb6e5);
-            background: linear-gradient(to bottom right, #86fde8, #acb6e5);
+            background: black;
         }
 
         body>.grid {
@@ -48,15 +46,53 @@
                     }
                 }
             });
+            hei();
         });
+        function hei(){
+            var c = document.getElementById("c");
+            var ctx = c.getContext("2d");
+
+            c.height = window.innerHeight/3;
+            c.width = window.innerWidth;
+            var chinese = "ceshi";
+            chinese = chinese.split("");
+
+            var font_size = 10;
+            var columns = c.width / font_size;
+            //an array of drops - one per column
+            var drops = [];
+            for (var x = 0; x < columns; x++)
+                drops[x] = 1;
+            //drawing the characters
+            function draw() {
+                ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+                ctx.fillRect(0, 0, c.width, c.height);
+
+                ctx.fillStyle = "#0F0"; //green text
+                ctx.font = (Math.random() * font_size) + "px arial";
+                //looping over drops
+                for (var i = 0; i < drops.length; i++) {
+                    var text = chinese[Math.floor(Math.random() * chinese.length)];
+                    ctx.fillText(text, i * font_size, drops[i] * font_size);
+
+                    if (drops[i] * font_size > c.height && Math.random() > 0.975)
+                        drops[i] = 0;
+
+                    drops[i]++;
+                }
+            }
+            setInterval(draw, 8);
+        }
     </script>
+    
+    <canvas id="c"></canvas>
 
-    <div class="ui middle aligned center aligned grid">
+    <div class="ui top aligned center aligned grid" style="position: relative; margin-top: 0%;">
 
-        <div class="column">
+        <div class="black column">
 
             <form class="ui large form" method="POST">
-                <div class="ui stacked segment">
+                <div class="ui black inverted stacked segment">
                     <h2 class="ui image header">
                         <div class="content">
                             <img src="/logo.png" style="height: 70px;">

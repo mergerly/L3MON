@@ -3,7 +3,7 @@
 }
 
 .hoverEdit .item:hover {
-  background-color: #fbfbfb !important;
+  background-color: #000000 !important;
   border-color: rgba(34, 36, 38, 0.25) !important;
 }
 
@@ -37,4 +37,9 @@
 .logs .logitm.ERROR {
   color: #f03434;
 }
+
+body {
+    background-color: black;
+}
+
 /*# sourceMappingURL=custom.css.map */
