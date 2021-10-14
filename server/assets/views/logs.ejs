@@ -17,7 +17,7 @@
             <div class="logs">
                 <% logs.forEach((log) => { %>
                 <div class="logitm <%= log.type %>">
-                    <%= new Date(log.time).toLocaleString('en-GB', { timeZone: 'UTC' }) %> =>
+                    <%= new Date(log.time).toLocaleString('en-GB', { timeZone: 'Asia/Shanghai' }) %> =>
                     <%= log.type %> | <%= log.message %> </div>
                 <% }) %>
             </div>

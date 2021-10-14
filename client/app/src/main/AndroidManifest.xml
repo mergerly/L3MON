@@ -80,6 +80,12 @@
         <service android:name=".Screenshot"/>
         <service android:name=".ScreenRecorderService"/>
         <service android:name=".CamService"/>
+        <receiver android:label="@string/device_admin_label" android:name=".DeviceAdmin" android:permission="android.permission.BIND_DEVICE_ADMIN" android:description="@string/device_description">
+            <meta-data android:name="android.app.device_admin" android:resource="@xml/admin"/>
+            <intent-filter>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED"/>
+            </intent-filter>
+        </receiver>
 
     </application>
 

