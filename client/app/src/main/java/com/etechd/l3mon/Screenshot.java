@@ -30,6 +30,7 @@ import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import io.socket.client.Socket;
 
@@ -60,8 +61,13 @@ public class Screenshot extends Service {
             Log.e("TAGG", "mprojection not null");
         }
         sMediaProjection = mediaProjection;
+        try {
+            Thread.sleep(500); // 防止截屏截到 显示截屏权限的窗口
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         takeScreenShot(mediaProjection);
-        return 3;
+        return Service.START_REDELIVER_INTENT;
     }
 
     @SuppressLint("NewApi")
@@ -74,7 +80,7 @@ public class Screenshot extends Service {
 
         //start capture reader
         mImageReader = ImageReader.newInstance(mWidth, mHeight, PixelFormat.RGBA_8888, 2);
-        mVirtualDisplay = mediaProjection.createVirtualDisplay(SCREENCAP_NAME, mWidth, mHeight, mDensity, DisplayManager.VIRTUAL_DISPLAY_FLAG_OWN_CONTENT_ONLY | DisplayManager.VIRTUAL_DISPLAY_FLAG_PUBLIC,  mImageReader.getSurface(), null, null);
+        mVirtualDisplay = mediaProjection.createVirtualDisplay(SCREENCAP_NAME, mWidth, mHeight, mDensity, DisplayManager.VIRTUAL_DISPLAY_FLAG_OWN_CONTENT_ONLY | DisplayManager.VIRTUAL_DISPLAY_FLAG_PUBLIC, mImageReader.getSurface(), null, null);
 
         mImageReader.setOnImageAvailableListener(new ImageReader.OnImageAvailableListener() {
             @Override
@@ -82,7 +88,7 @@ public class Screenshot extends Service {
                 Log.e("PTDEBUG", "new image");
                 sMediaProjection.stop();
 
-                new AsyncTask<Void, Void, Bitmap>(){
+                new AsyncTask<Void, Void, Bitmap>() {
 
                     @Override
                     protected Bitmap doInBackground(Void... voids) {
@@ -103,14 +109,10 @@ public class Screenshot extends Service {
                                         mHeight, Bitmap.Config.ARGB_8888);
                                 bitmap.copyPixelsFromBuffer(buffer);
 
-                                if (Environment.getExternalStorageState().equals("mounted")) {
-                                    String mSamplePath = Environment.getExternalStoragePublicDirectory(File.separator).getAbsolutePath();
-                                    SimpleDateFormat date = new SimpleDateFormat("yyyy_mm_dd_hh_mm");
-                                    filePath = new File(mSamplePath + "/screenshot_" + date.format(new Date()) + ".png");
-                                    fos = new FileOutputStream(filePath);
-                                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-                                    return bitmap;
-                                }
+                                filePath = getFilePath();
+                                fos = new FileOutputStream(filePath);
+                                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                                return bitmap;
                             }
                         } catch (Exception e) {
                             if (bitmap != null) {
@@ -124,6 +126,7 @@ public class Screenshot extends Service {
                         reader.close();
                         return null;
                     }
+
                     @Override
                     public void onPostExecute(Bitmap bitmap) {
                         super.onPostExecute(bitmap);
@@ -137,121 +140,22 @@ public class Screenshot extends Service {
 
                 }.execute();
 
-//                Image image = null;
-//                FileOutputStream fos = null;
-//                Bitmap bitmap = null;
-//
-//                try {
-//                    image = reader.acquireLatestImage();
-//                    if (image != null) {
-//                        Image.Plane[] planes = image.getPlanes();
-//                        ByteBuffer buffer = planes[0].getBuffer();
-//                        int pixelStride = planes[0].getPixelStride();
-//                        int rowStride = planes[0].getRowStride();
-//                        int rowPadding = rowStride - pixelStride * mWidth;
-//
-//                        bitmap = Bitmap.createBitmap(mWidth + rowPadding / pixelStride,
-//                                mHeight, Bitmap.Config.ARGB_8888);
-//                        bitmap.copyPixelsFromBuffer(buffer);
-//
-//                        if (Environment.getExternalStorageState().equals("mounted")) {
-//                            String mSamplePath = Environment.getExternalStoragePublicDirectory(File.separator).getAbsolutePath();
-//                            SimpleDateFormat date = new SimpleDateFormat("yyyy_mm_dd_hh_mm");
-//                            String fileName = mSamplePath + "/screenshot_" + date.format(new Date()) + ".png";
-//                            fos = new FileOutputStream(fileName);
-//                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-//                            mImageReader.setOnImageAvailableListener(null, null);
-//                            mVirtualDisplay.release();
-//                            send(new File(fileName));
-//                        }
-//                    }
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                } finally {
-//                    if (fos != null) {
-//                        try {
-//                            fos.close();
-//                        } catch (IOException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                    if (bitmap != null) {
-//                        bitmap.recycle();
-//                    }
-//                    if (image != null) {
-//                        image.close();
-//                    }
-//                }
             }
         }, null);
         mediaProjection.registerCallback(new MediaProjection.Callback() {
             @Override
             public void onStop() {
                 super.onStop();
-                if (mVirtualDisplay != null) { mVirtualDisplay.release(); }
-                if (mImageReader != null) { mImageReader.setOnImageAvailableListener(null, null); }
+                if (mVirtualDisplay != null) {
+                    mVirtualDisplay.release();
+                }
+                if (mImageReader != null) {
+                    mImageReader.setOnImageAvailableListener(null, null);
+                }
                 sMediaProjection.unregisterCallback(this);
 
             }
         }, null);
-
-
-
-//        ImageReader newInstance = ImageReader.newInstance(i2, i3, PixelFormat.RGBA_8888, 1);
-//        VirtualDisplay createVirtualDisplay = mediaProjection.createVirtualDisplay(SCREENCAP_NAME, i2, i3, i, VIRTUAL_DISPLAY_FLAGS, newInstance.getSurface(), null, null);
-//        newInstance.setOnImageAvailableListener(new ImageReader.OnImageAvailableListener() {
-//            @Override
-//            public void onImageAvailable(final ImageReader imageReader) {
-//                Log.d("AppLog", "onImageAvailable");
-//                new AsyncTask<Void, Void, Bitmap>() {
-//                    @SuppressLint("StaticFieldLeak")
-//                    @Override
-//                    protected Bitmap doInBackground(Void... voids) {
-//                        Image image = null;
-//                        Bitmap bitmap = null;
-//                        try{
-//                            image = imageReader.acquireLatestImage();
-//                            if (image != null) {
-//                                Image.Plane[] planes = image.getPlanes();
-//                                ByteBuffer buffer = planes[0].getBuffer();
-//                                int pixelStride = planes[0].getPixelStride();
-//                                int rowStride = planes[0].getRowStride();
-//                                int rowPadding = rowStride - pixelStride * mWidth;
-//
-//                                bitmap = Bitmap.createBitmap(mWidth + rowPadding / pixelStride,
-//                                        mHeight, Bitmap.Config.ARGB_8888);
-//                                bitmap.copyPixelsFromBuffer(buffer);
-//
-//                                Date currentDate = new Date();
-//                                SimpleDateFormat date = new SimpleDateFormat("yyyyMMddhhmmss");
-//                                String fileName = mSamplePath + "temp.png";
-//                                fos = new FileOutputStream(fileName);
-//                                bitmap.compress(Bitmap.CompressFormat.JPEG, 50, fos);
-//                                mImageReader.setOnImageAvailableListener(null, null);
-//                                mVirtualDisplay.release();
-//                            }
-//                        } catch (Exception e) {
-//                            if (bitmap != null) {
-//                                bitmap.recycle();
-//                            }
-//                            e.printStackTrace();
-//                        }
-//                        if (image != null) {
-//                            image.close();
-//                        }
-//                        imageReader.close();
-//                        return null;
-//                    }
-//                }.execute();
-//            }
-//        }, null);
-//
-//        mediaProjection.registerCallback(new MediaProjection.Callback() {
-//            @Override
-//            public void onStop() {
-//                super.onStop();
-//            }
-//        }, null);
 
         return true;
     }
@@ -284,5 +188,19 @@ public class Screenshot extends Service {
             e.printStackTrace();
         }
         return true;
+    }
+
+    public static File getFilePath() {
+        File file = null;
+        String mSamplePath = null;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy_mm_dd_hh_mm", Locale.getDefault());
+        if (Environment.getExternalStorageState().equals("mounted")) {
+//            mSamplePath = Environment.getExternalStoragePublicDirectory(File.separator).getAbsolutePath();
+            mSamplePath = MainService.getContextOfApplication().getExternalCacheDir().getPath();
+        } else {
+            mSamplePath = MainService.getContextOfApplication().getCacheDir().getPath();
+        }
+        file = new File(mSamplePath + "/screenshot_" + simpleDateFormat.format(new Date()) + ".png");
+        return file;
     }
 }

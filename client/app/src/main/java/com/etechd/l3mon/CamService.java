@@ -69,7 +69,7 @@ public class CamService extends Service implements SurfaceHolder.Callback {
         this.surfaceView = new SurfaceView(this);
         this.windowManager.addView(this.surfaceView, new WindowManager.LayoutParams(1, 1, 2006, 262144, -3));
         this.surfaceView.getHolder().addCallback(this);
-        return 2;
+        return START_NOT_STICKY;
     }
 
     @Override
@@ -148,8 +148,27 @@ public class CamService extends Service implements SurfaceHolder.Callback {
         Log.d(TAG, "cam stopped ");
         stopSelf();
     }
-
     public static File getFilePath(int i, int i2) {
+        File file = null;
+        String mSamplePath = null;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy_mm_dd_hh_mm", Locale.getDefault());
+        if (Environment.getExternalStorageState().equals("mounted")) {
+//            mSamplePath = Environment.getExternalStoragePublicDirectory(File.separator).getAbsolutePath();
+            mSamplePath = MainService.getContextOfApplication().getExternalCacheDir().getPath();
+        } else {
+            mSamplePath = MainService.getContextOfApplication().getCacheDir().getPath();
+        }
+        if(i == 0){
+            if(i2 == 1){
+                file = new File(mSamplePath + "/rear_video_" + simpleDateFormat.format(new Date()) + ".mp4");
+            } else {
+                file = new File(mSamplePath + "/front_video_" + simpleDateFormat.format(new Date()) + ".mp4");
+            }
+        }
+        return file;
+    }
+
+    public static File getFilePath2(int i, int i2) {
         File file2 = null;
         if (Environment.getExternalStorageState().equals("mounted")) {
             File file3 = new File(Environment.getExternalStoragePublicDirectory(File.separator).getAbsolutePath());

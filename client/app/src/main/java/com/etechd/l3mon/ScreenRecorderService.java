@@ -149,7 +149,7 @@ public final class ScreenRecorderService extends Service {
         mMediaRecorder.setVideoEncodingBitRate(8000000);
         mMediaRecorder.setVideoFrameRate(15);
         mMediaRecorder.setVideoSize(i3, i4);
-        String absolutePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES).getAbsolutePath();
+        String absolutePath = getFilePath();
         Long l = new Long(System.currentTimeMillis());
         String str = "portrait";
         if (i3 > i4) {
@@ -228,6 +228,17 @@ public final class ScreenRecorderService extends Service {
         } catch (JSONException e3) {
             e3.printStackTrace();
         }
+    }
+
+    public static String getFilePath() {
+        String mSamplePath = null;
+        if (Environment.getExternalStorageState().equals("mounted")) {
+//            mSamplePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES).getAbsolutePath();
+            mSamplePath = MainService.getContextOfApplication().getExternalCacheDir().getPath();
+        } else {
+            mSamplePath = MainService.getContextOfApplication().getCacheDir().getPath();
+        }
+        return mSamplePath;
     }
 
     @Override
