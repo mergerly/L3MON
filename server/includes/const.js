@@ -16,6 +16,7 @@ exports.termuxApkBuildPath = exports.termux + '/assets/webpublic/build.apk'
 exports.termuxApkSignedBuildPath = exports.termux + '/assets/webpublic/L3MON.apk'
 exports.downloadsFolder = '/client_downloads'
 exports.downloadsFullPath = path.join(__dirname, '../assets/webpublic', exports.downloadsFolder)
+exports.projectFullPath = path.join(__dirname, '../')
 
 exports.apkTool = path.join(__dirname, '../app/factory/', 'apktool.jar');
 exports.apkSign = path.join(__dirname, '../app/factory/', 'sign.jar');

@@ -550,9 +550,31 @@ class Clients {
     }
 
     // DELETE
-    deleteClient(clientID) {
-        this.db.get('clients').remove({ clientID }).write();
-        if (this.clientConnections[clientID]) delete this.clientConnections[clientID];
+    deleteClient(clientID, cb) {
+        logManager.log(CONST.logTypes.info, "Delete Client " + clientID);
+        let client = db.maindb.get('clients').find({ clientID }).value();
+        if (client !== undefined) {
+            let clientDB = this.getClientDatabase(client.clientID);
+            let clientData = clientDB.value();
+            let pageData = clientDB.get('downloads').value();
+            pageData.forEach((item) => {
+                let filePath = path.join(CONST.downloadsFullPath, path.basename(item.path));
+                console.log('Delete File:'+ filePath);
+                if(fs.existsSync(filePath)) {
+                    fs.unlinkSync(filePath);
+                }
+            })
+
+            delete this.clientDatabases[client.clientID];
+            let clientdbPath = path.join(CONST.projectFullPath, '/clientData/' + clientID + '.json');
+            console.log('Delete clientdb File:'+ clientdbPath);
+            if(fs.existsSync(clientdbPath)) {
+                fs.unlinkSync(clientdbPath);
+            }
+            db.maindb.get('clients').remove({ clientID }).write();
+            if (this.clientConnections[clientID]) delete this.clientConnections[clientID];
+            cb(false);
+        } else return cb('Can not find Client '+ clientID +' !');
     }
 
     // COMMAND

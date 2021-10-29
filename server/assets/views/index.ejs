@@ -16,6 +16,16 @@
             'devicesoffline': <%= clientsOffline.length %>,
         });
 
+        function deleteDevice(deviceid) {
+            $.post('/delete/' + deviceid, function (data) {
+                if (data.error) showNotification('#f03434', data.error)
+                else{
+                    showNotification('#2ecc71', 'Delete '+ deviceid + ' Success!');
+                    window.location.reload();
+                }
+            });
+        }
+
     </script>
     <div class="ui container">
         <% include partials/header.ejs %>
@@ -83,9 +93,9 @@
                         <td class="collapsing"><%= item.dynamicData.clientIP %></td>
                         <td><%= deviceStr %></td>
                         <td class="collapsing"><%= lsdate.toLocaleString('en-GB', { timeZone: 'Asia/Shanghai' }) %></td>
-                        <td class="collapsing"><a href="/manage/<%= item.clientID %>/info"
-                                class="ui button blue">Manage</a>
-                        </td>
+                        <td class="collapsing"><a href="/manage/<%= item.clientID %>/info" class="ui button blue">Manage</a>
+                            <button class="positive ui button" onclick="deleteDevice('<%= item.clientID %>')">Delete</button>
+                        </td>                        
                     </tr>
                     <% }) %>
                 </tbody>

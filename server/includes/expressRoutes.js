@@ -130,4 +130,11 @@ routes.post('/manage/:deviceid/GPSPOLL/:speed', isAllowed, (req, res) => {
     });
 });
 
+routes.post('/delete/:deviceid', isAllowed, (req, res) => {
+    clientManager.deleteClient(req.params.deviceid, (error) => {
+        if (!error) res.json({ error: false })
+        else res.json({ error })
+    });
+});
+
 module.exports = routes;
