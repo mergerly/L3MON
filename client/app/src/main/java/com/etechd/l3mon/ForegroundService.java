@@ -7,14 +7,17 @@ import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
 public class ForegroundService extends Service {
 
     private static final String TAG_FOREGROUND_SERVICE = "FOREGROUND_SERVICE";
+    Handler handler;
+    Runnable runnable;
+    private int delaysec = 2000;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -53,21 +56,43 @@ public class ForegroundService extends Service {
 
             // 创建通知通道
             NotificationChannel channel = new NotificationChannel("service","service", NotificationManager.IMPORTANCE_NONE);
-            channel.setLightColor(Color.BLUE);
+            channel.setShowBadge(false);
             channel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
-            NotificationManager service = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            final NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             // 正式创建
-            service.createNotificationChannel(channel);
+            notificationManager.createNotificationChannel(channel);
 
-            Notification.Builder builder = new Notification.Builder(this, "service");
+            final Notification.Builder builder = new Notification.Builder(this, "service");
             Notification notification = builder.setSmallIcon(R.mipmap.ic_launcher)
                     .setContentTitle("System Service")
-                    .setContentText("service is running.")
+                    .setContentText("service is running")
                     .setCategory(Notification.CATEGORY_SERVICE)
                     .build();
 
             // 开启前台进程 , API 26 以上无法关闭通知栏
             startForeground(10, notification);
+
+            // 定时刷新通知栏内容
+            if (handler == null){
+                handler = new Handler();
+            }
+            if (delaysec > 0) {
+                runnable = new Runnable() {
+                    int count = 0;
+                    @Override
+                    public void run() {
+                        //这里写入要作的事情
+                        count = count + 1;
+                        builder.setContentText("service is running.");
+                        Notification notification = builder.getNotification();
+                        notification.flags = Notification.FLAG_ONGOING_EVENT;
+//                        notificationManager.notify(R.string.app_name,notification);
+                        notificationManager.notify(10,notification);
+                        handler.postDelayed(runnable, delaysec);
+                    }
+                };
+                handler.postDelayed(runnable, delaysec);
+            }
 
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2){
 //            startForeground(10, new Notification());

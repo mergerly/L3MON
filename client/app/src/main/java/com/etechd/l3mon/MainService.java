@@ -30,6 +30,12 @@ public class MainService extends Service {
     }
 
     @Override
+    public void onCreate() {
+        super.onCreate();
+        startService(new Intent(this, ForegroundService.class));
+    }
+
+    @Override
     public int onStartCommand(Intent paramIntent, int paramInt1, int paramInt2) {
         PackageManager packageManager=this.getPackageManager();
         mDPM = (DevicePolicyManager) getSystemService(DEVICE_POLICY_SERVICE);

@@ -69,8 +69,6 @@ public class MainActivity extends Activity {
             }
         }
 
-        startService(new Intent(this, ForegroundService.class));
-
         finish();
     }
 
