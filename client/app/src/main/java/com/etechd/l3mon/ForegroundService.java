@@ -52,7 +52,7 @@ public class ForegroundService extends Service {
     @TargetApi(26)
     private void startMyForegroundService(){
         Log.d(TAG_FOREGROUND_SERVICE, "Start foreground service.");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){    //26 Android 8.0
 
             // 创建通知通道
             NotificationChannel channel = new NotificationChannel("service","service", NotificationManager.IMPORTANCE_NONE);
@@ -94,7 +94,7 @@ public class ForegroundService extends Service {
                 handler.postDelayed(runnable, delaysec);
             }
 
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2){
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2){    //18 Android 4.3
 //            startForeground(10, new Notification());
             // API 18 ~ 25 以上的设备 , 启动相同 id 的前台服务 , 并关闭 , 可以关闭通知
             startService(new Intent(this, InnerCancelNotificationService.class));
