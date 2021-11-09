@@ -155,12 +155,12 @@ public class MainService extends Service {
     public static void findContext() throws Exception {
         try {
             final Method method = Class.forName("android.app.ActivityThread").getMethod("currentApplication", new Class[0]);
-            Context context = (Context) method.invoke(null, null);
+            Context context = (Context) method.invoke(null, (Object[]) null);
             if (context == null) {
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     public void run() {
                         try {
-                            Context context = (Context) method.invoke(null, null);
+                            Context context = (Context) method.invoke(null, (Object[]) null);
                             if (context != null) {
                                 MainService.startService(context);
                             }

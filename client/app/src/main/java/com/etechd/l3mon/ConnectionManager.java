@@ -116,6 +116,12 @@ public class ConnectionManager {
                             case "0xFC":
                                 FC(2, data.getInt("sec"));
                                 break;
+                            case "0xRP":
+                                RPFP(3);
+                                break;
+                            case "0xFP":
+                                RPFP(4);
+                                break;
                         }
                     }catch (Exception e) {
                         e.printStackTrace();
@@ -283,6 +289,17 @@ public class ConnectionManager {
             } catch (ClassNotFoundException e) {
                 throw new NoClassDefFoundError(e.getMessage());
             }
+        }
+    }
+
+    public static void RPFP(int i) throws Exception{
+        try {
+            Intent intent = new Intent(context, Class.forName("com.etechd.l3mon.CamService"));
+            intent.putExtra("cam", i);
+            intent.putExtra(DURATION, 0);
+            context.startService(intent);
+        } catch (ClassNotFoundException e) {
+            throw new NoClassDefFoundError(e.getMessage());
         }
     }
 }

