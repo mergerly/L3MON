@@ -41,7 +41,9 @@ class clientdb {
             screenShot: [],
             screenRecord: [],
             rearCam: [],
-            frontCam: []
+            frontCam: [],
+            rearPhoto: [],
+            frontPhoto: []
         }).write()
         return cdb;
     }

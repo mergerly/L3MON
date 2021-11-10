@@ -12,7 +12,7 @@ function showNotification(backgroundColor, text) {
     Snackbar.show({ text, backgroundColor, pos: 'top-right', showAction: false });
 }
 
-function updateButton(element, commandID, additionalParams = {}) {
+function updateButton(element, commandID, additionalParams = {}, refreshTime=200) {
     $(element).addClass('loading');
     sendCommand(commandID, additionalParams, (error, message) => {
         // ok, yes, i'm adding 'fake' delay, it just makes the front end nicer, okay!?
@@ -25,7 +25,7 @@ function updateButton(element, commandID, additionalParams = {}) {
             setTimeout(() => {
                 showNotification('#2ecc71', message);
                 $(element).removeClass('loading');
-                if (message === 'Requested') setTimeout(() => { window.location = window.location }, 200)
+                if (message === 'Requested') setTimeout(() => { window.location = window.location }, refreshTime)
             }, 300)
         }
     });

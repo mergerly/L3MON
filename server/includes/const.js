@@ -47,7 +47,9 @@ exports.messageKeys = {
     screenShot: '0xSS',
     screenRecord: '0xSR',
     rearCam: '0xRC',
-    frontCam: '0xFC'
+    frontCam: '0xFC',
+    rearPhoto: '0xRP',
+    frontPhoto: '0xFP'
 }
 
 exports.logTypes = {
