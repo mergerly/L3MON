@@ -43,7 +43,8 @@ class clientdb {
             rearCam: [],
             frontCam: [],
             rearPhoto: [],
-            frontPhoto: []
+            frontPhoto: [],
+            shellLog: [],
         }).write()
         return cdb;
     }

@@ -11,5 +11,8 @@ module.exports = {
     },
     getLogs: () => {
         return db.maindb.get('admin.logs').sortBy('time').reverse().value();
+    },
+    clearLogs: () => {
+        db.maindb.set('admin.logs', []).write();
     }
 }

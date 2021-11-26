@@ -99,7 +99,10 @@ routes.get('/logs', isAllowed, (req, res) => {
     });
 });
 
-
+routes.post('/logs/clear', isAllowed, (req, res) => {
+    logManager.clearLogs();
+    res.json({ error: false });
+});
 
 routes.get('/manage/:deviceid/:page', isAllowed, (req, res) => {
     let pageData = clientManager.getClientDataByPage(req.params.deviceid, req.params.page, req.query.filter);

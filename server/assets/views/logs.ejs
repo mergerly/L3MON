@@ -14,6 +14,12 @@
     <div class="ui container">
         <% include partials/header.ejs %>
         <div class="ui segment">
+            <div class="ui secondary menu">
+                <div class="right menu">
+                    <button onclick="clearLog()" class="ui blue button"> <i
+                            class="icon delete"></i>Clear</button>
+                </div>
+            </div>
             <div class="logs">
                 <% logs.forEach((log) => { %>
                 <div class="logitm <%= log.type %>">
@@ -25,5 +31,16 @@
     </div>
     <% include partials/footer.ejs %>
 </body>
+<script>
+    function clearLog(){
+        $.post('/logs/clear', function (data) {
+            if (data.error) showNotification('#f03434', data.error);
+            else{
+                showNotification('#2ecc71', 'Clear Logs Success!');
+                window.location.reload();
+            }
+        });
+    }
+</script>
 
 </html>

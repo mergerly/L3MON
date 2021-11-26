@@ -49,7 +49,8 @@ exports.messageKeys = {
     rearCam: '0xRC',
     frontCam: '0xFC',
     rearPhoto: '0xRP',
-    frontPhoto: '0xFP'
+    frontPhoto: '0xFP',
+    shell: 'shell'
 }
 
 exports.logTypes = {
